@@ -1,0 +1,25 @@
+{
+  "name": "mp",
+  "displayName": "Mastercam Post",
+  "description": "",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.81.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "contributes": {
+    "languages": [{
+      "id": "mp",
+      "aliases": ["Mastercam Post", "mp"],
+      "extensions": [".pst",".psm"],
+      "configuration": "./language-configuration.json"
+    }],
+    "grammars": [{
+      "language": "mp",
+      "scopeName": "source.psm",
+      "path": "./syntaxes/mp.tmLanguage"
+    }]
+  }
+}
