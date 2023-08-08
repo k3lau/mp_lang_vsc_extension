@@ -1,0 +1,820 @@
+{
+	"name": "mp",
+	"fileTypes": [
+		"mp"
+	],
+	"scopeName": "source.mp",
+	"patterns": [
+		{
+			"include": "#statement"
+		},
+		{
+			"include": "#expression"
+		}
+	],
+	"repository": {
+		"impossible": {
+			"comment": "This is a special rule that should be used where no match is desired. It is not a good idea to match something like '1{0}' because in some cases that can result in infinite loops in token generation. So the rule instead matches and impossible expression to allow a match to fail and move to the next token.",
+			"match": "$.^"
+		},
+		"statement": {
+			"patterns": [
+				{
+					"include": "#function-declaration"
+				},
+				{
+					"include": "#statement-keyword"
+				},
+				{
+					"include": "#assignment-operator"
+				},
+				{
+					"include": "#docstring-statement"
+				}
+			]
+		},
+		"comments": {
+			"patterns": [
+				{
+					"name": "comment.line",
+					"match": "(#.*$)"
+				}
+			]
+		},
+		"statement-keyword": {
+			"patterns": [
+				{
+					"name": "keyword.control.flow",
+					"match": "(break | else | if | while)"
+				}
+			]
+		},
+		"expression-bare": {
+			"comment": "valid Python expressions w/o comments and line continuation",
+			"patterns": [
+				{
+					"include": "#backticks"
+				},
+				{
+					"include": "#illegal-anno"
+				},
+				{
+					"include": "#literal"
+				},
+				{
+					"include": "#regexp"
+				},
+				{
+					"include": "#string"
+				},
+				{
+					"include": "#generator"
+				},
+				{
+					"include": "#illegal-operator"
+				},
+				{
+					"include": "#operator"
+				},
+				{
+					"include": "#item-access"
+				},
+				{
+					"include": "#list"
+				},
+				{
+					"include": "#odd-function-call"
+				},
+				{
+					"include": "#round-braces"
+				},
+				{
+					"include": "#function-call"
+				},
+				{
+					"include": "#builtin-functions"
+				},
+				{
+					"include": "#builtin-types"
+				},
+				{
+					"include": "#builtin-exceptions"
+				},
+				{
+					"include": "#magic-names"
+				},
+				{
+					"include": "#special-names"
+				},
+				{
+					"include": "#illegal-names"
+				},
+				{
+					"include": "#special-variables"
+				},
+				{
+					"include": "#ellipsis"
+				},
+				{
+					"include": "#punctuation"
+				}
+			]
+		},
+		"expression-base": {
+			"comment": "valid expressions with comments and line continuation",
+			"patterns": [
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#expression-bare"
+				}
+			]
+		},
+		"expression": {
+			"comment": "All valid Python expressions",
+			"patterns": [
+				{
+					"include": "#expression-base"
+				},
+				{
+					"include": "#member-access"
+				}
+			]
+		},
+		"list": {
+			"begin": "\\[",
+			"end": "\\]",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.definition.list.begin.python"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.definition.list.end.python"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"round-braces": {
+			"begin": "\\(",
+			"end": "\\)",
+			"beginCaptures": {
+				"0": {
+					"name": "punctuation.parenthesis.begin.python"
+				}
+			},
+			"endCaptures": {
+				"0": {
+					"name": "punctuation.parenthesis.end.python"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"assignment-operator": {
+			"name": "keyword.operator.assignment.python",
+			"match": "(?x)\n     <<= | >>= | //= | \\*\\*=\n    | \\+= | -= | /= | @=\n    | \\*= | %= | ~= | \\^= | &= | \\|=\n    | =(?!=)\n"
+		},
+		"operator": {
+			"match": "(?x)\n    \\b(?<!\\.)\n      (?:\n        (and | or | not | in | is)                         (?# 1)\n        |\n        (for | if | else | await | (?:yield(?:\\s+from)?))  (?# 2)\n      )\n    (?!\\s*:)\\b\n\n    | (<< | >> | & | \\| | \\^ | ~)                          (?# 3)\n\n    | (\\*\\* | \\* | \\+ | - | % | // | / | @)                (?# 4)\n\n    | (!= | == | >= | <= | < | >)                          (?# 5)\n\n    | (:=)                                                 (?# 6)\n",
+			"captures": {
+				"1": {
+					"name": "keyword.operator.logical.python"
+				},
+				"2": {
+					"name": "keyword.control.flow.python"
+				},
+				"3": {
+					"name": "keyword.operator.bitwise.python"
+				},
+				"4": {
+					"name": "keyword.operator.arithmetic.python"
+				},
+				"5": {
+					"name": "keyword.operator.comparison.python"
+				},
+				"6": {
+					"name": "keyword.operator.assignment.python"
+				}
+			}
+		},
+		"punctuation": {
+			"patterns": [
+				{
+					"name": "punctuation.separator.colon.python",
+					"match": ":"
+				},
+				{
+					"name": "punctuation.separator.element.python",
+					"match": ","
+				}
+			]
+		},
+		"literal": {
+			"patterns": [
+				{
+					"name": "constant.language.python",
+					"match": "\\b(True|False|None|NotImplemented|Ellipsis)\\b"
+				},
+				{
+					"include": "#number"
+				}
+			]
+		},
+		"number": {
+			"name": "constant.numeric.python",
+			"patterns": [
+				{
+					"include": "#number-float"
+				},
+				{
+					"include": "#number-dec"
+				},
+				{
+					"include": "#number-hex"
+				},
+				{
+					"include": "#number-oct"
+				},
+				{
+					"include": "#number-bin"
+				},
+				{
+					"include": "#number-long"
+				},
+				{
+					"name": "invalid.illegal.name.python",
+					"match": "\\b[0-9]+\\w+"
+				}
+			]
+		},
+		"number-float": {
+			"name": "constant.numeric.float.python",
+			"match": "(?x)\n  (?<! \\w)(?:\n    (?:\n      \\.[0-9](?: _?[0-9] )*\n      |\n      [0-9](?: _?[0-9] )* \\. [0-9](?: _?[0-9] )*\n      |\n      [0-9](?: _?[0-9] )* \\.\n    ) (?: [eE][+-]?[0-9](?: _?[0-9] )* )?\n    |\n    [0-9](?: _?[0-9] )* (?: [eE][+-]?[0-9](?: _?[0-9] )* )\n  )([jJ])?\\b\n",
+			"captures": {
+				"1": {
+					"name": "storage.type.imaginary.number.python"
+				}
+			}
+		},
+		"number-dec": {
+			"name": "constant.numeric.dec.python",
+			"match": "(?x)\n  (?<![\\w\\.])(?:\n      [1-9](?: _?[0-9] )*\n      |\n      0+\n      |\n      [0-9](?: _?[0-9] )* ([jJ])\n      |\n      0 ([0-9]+)(?![eE\\.])\n  )\\b\n",
+			"captures": {
+				"1": {
+					"name": "storage.type.imaginary.number.python"
+				},
+				"2": {
+					"name": "invalid.illegal.dec.python"
+				}
+			}
+		},
+		"number-hex": {
+			"name": "constant.numeric.hex.python",
+			"match": "(?x)\n  (?<![\\w\\.])\n    (0[xX]) (_?[0-9a-fA-F])+\n  \\b\n",
+			"captures": {
+				"1": {
+					"name": "storage.type.number.python"
+				}
+			}
+		},
+		"number-oct": {
+			"name": "constant.numeric.oct.python",
+			"match": "(?x)\n  (?<![\\w\\.])\n    (0[oO]) (_?[0-7])+\n  \\b\n",
+			"captures": {
+				"1": {
+					"name": "storage.type.number.python"
+				}
+			}
+		},
+		"number-bin": {
+			"name": "constant.numeric.bin.python",
+			"match": "(?x)\n  (?<![\\w\\.])\n    (0[bB]) (_?[01])+\n  \\b\n",
+			"captures": {
+				"1": {
+					"name": "storage.type.number.python"
+				}
+			}
+		},
+		"number-long": {
+			"name": "constant.numeric.bin.python",
+			"comment": "this is to support python2 syntax for long ints",
+			"match": "(?x)\n  (?<![\\w\\.])\n    ([1-9][0-9]* | 0) ([lL])\n  \\b\n",
+			"captures": {
+				"2": {
+					"name": "storage.type.number.python"
+				}
+			}
+		},
+		"regexp": {
+			"patterns": [
+				{
+					"include": "#regexp-single-three-line"
+				},
+				{
+					"include": "#regexp-double-three-line"
+				},
+				{
+					"include": "#regexp-single-one-line"
+				},
+				{
+					"include": "#regexp-double-one-line"
+				}
+			]
+		},
+		"string": {
+			"patterns": [
+				{
+					"include": "#string-quoted-multi-line"
+				},
+				{
+					"include": "#string-quoted-single-line"
+				},
+				{
+					"include": "#string-bin-quoted-multi-line"
+				},
+				{
+					"include": "#string-bin-quoted-single-line"
+				},
+				{
+					"include": "#string-raw-quoted-multi-line"
+				},
+				{
+					"include": "#string-raw-quoted-single-line"
+				},
+				{
+					"include": "#string-raw-bin-quoted-multi-line"
+				},
+				{
+					"include": "#string-raw-bin-quoted-single-line"
+				}
+			]
+		},
+		"string-unicode-guts": {
+			"patterns": [
+				{
+					"include": "#escape-sequence-unicode"
+				},
+				{
+					"include": "#string-entity"
+				},
+				{
+					"include": "#string-brace-formatting"
+				}
+			]
+		},
+		"string-consume-escape": {
+			"match": "\\\\['\"\\n\\\\]"
+		},
+		"string-raw-guts": {
+			"patterns": [
+				{
+					"include": "#string-consume-escape"
+				},
+				{
+					"include": "#string-formatting"
+				},
+				{
+					"include": "#string-brace-formatting"
+				}
+			]
+		},
+		"string-raw-bin-guts": {
+			"patterns": [
+				{
+					"include": "#string-consume-escape"
+				},
+				{
+					"include": "#string-formatting"
+				}
+			]
+		},
+		"string-entity": {
+			"patterns": [
+				{
+					"include": "#escape-sequence"
+				},
+				{
+					"include": "#string-formatting"
+				}
+			]
+		},
+		"escape-sequence-unicode": {
+			"patterns": [
+				{
+					"name": "constant.character.escape.python",
+					"match": "(?x)\n  \\\\ (\n        u[0-9A-Fa-f]{4}\n        | U[0-9A-Fa-f]{8}\n        | N\\{[\\w\\s]+?\\}\n     )\n"
+				}
+			]
+		},
+		"string-formatting": {
+			"name": "meta.format.percent.python",
+			"match": "(?x)\n  (\n    % (\\([\\w\\s]*\\))?\n      [-+#0 ]*\n      (\\d+|\\*)? (\\.(\\d+|\\*))?\n      ([hlL])?\n      [diouxXeEfFgGcrsab%]\n  )\n",
+			"captures": {
+				"1": {
+					"name": "constant.character.format.placeholder.other.python"
+				}
+			}
+		},
+		"string-brace-formatting": {
+			"patterns": [
+				{
+					"name": "meta.format.brace.python",
+					"match": "(?x)\n  (\n    {{ | }}\n    | (?:\n      {\n        \\w* (\\.[[:alpha:]_]\\w* | \\[[^\\]'\"]+\\])*\n        (![rsa])?\n        ( : \\w? [<>=^]? [-+ ]? \\#?\n          \\d* ,? (\\.\\d+)? [bcdeEfFgGnosxX%]? )?\n      })\n  )\n",
+					"captures": {
+						"1": {
+							"name": "constant.character.format.placeholder.other.python"
+						},
+						"3": {
+							"name": "storage.type.format.python"
+						},
+						"4": {
+							"name": "storage.type.format.python"
+						}
+					}
+				},
+				{
+					"name": "meta.format.brace.python",
+					"match": "(?x)\n  (\n    {\n      \\w* (\\.[[:alpha:]_]\\w* | \\[[^\\]'\"]+\\])*\n      (![rsa])?\n      (:)\n        [^'\"{}\\n]* (?:\n          \\{ [^'\"}\\n]*? \\} [^'\"{}\\n]*\n        )*\n    }\n  )\n",
+					"captures": {
+						"1": {
+							"name": "constant.character.format.placeholder.other.python"
+						},
+						"3": {
+							"name": "storage.type.format.python"
+						},
+						"4": {
+							"name": "storage.type.format.python"
+						}
+					}
+				}
+			]
+		},
+		"inheritance-identifier": {
+			"match": "(?x)\n  \\b ([[:alpha:]_]\\w*) \\b\n",
+			"captures": {
+				"1": {
+					"name": "entity.other.inherited-class.python"
+				}
+			}
+		},
+		"member-access-class": {
+			"name": "meta.member.access.python",
+			"begin": "(\\.)\\s*(?!\\.)",
+			"end": "(?<=\\S)(?=\\W)|$",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.separator.period.python"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#call-wrapper-inheritance"
+				},
+				{
+					"include": "#member-access-base"
+				},
+				{
+					"include": "#inheritance-identifier"
+				}
+			]
+		},
+		"function-declaration": {
+			"name": "meta.function.python",
+			"patterns": [
+				{
+					"include": "#function-def-name"
+				},
+				{
+					"include": "#parameters"
+				},
+				{
+					"include": "#return-annotation"
+				}
+			]
+		},
+		"function-def-name": {
+			"patterns": [
+				{
+					"include": "#illegal-object-name"
+				},
+				{
+					"include": "#builtin-possible-callables"
+				},
+				{
+					"name": "entity.name.function.python",
+					"match": "(p.*/b)"
+				}
+			]
+		},
+		"parameters": {
+			"name": "meta.function.parameters.python",
+			"begin": "(\\()",
+			"end": "(\\))",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.definition.parameters.begin.python"
+				}
+			},
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.parameters.end.python"
+				}
+			},
+			"patterns": [
+				{
+					"name": "keyword.operator.positional.parameter.python",
+					"match": "/"
+				},
+				{
+					"name": "keyword.operator.unpacking.parameter.python",
+					"match": "(\\*\\*|\\*)"
+				},
+				{
+					"include": "#illegal-names"
+				},
+				{
+					"include": "#illegal-object-name"
+				},
+				{
+					"include": "#parameter-special"
+				},
+				{
+					"include": "#comments"
+				},
+				{
+					"include": "#annotated-parameter"
+				}
+			]
+		},
+		"parameter-special": {
+			"match": "(?x)\n  \\b ((self)|(cls)) \\b \\s*(?:(,)|(?=\\)))\n",
+			"captures": {
+				"1": {
+					"name": "variable.parameter.function.language.python"
+				},
+				"2": {
+					"name": "variable.parameter.function.language.special.self.python"
+				},
+				"3": {
+					"name": "variable.parameter.function.language.special.cls.python"
+				},
+				"4": {
+					"name": "punctuation.separator.parameters.python"
+				}
+			}
+		},
+		"item-access": {
+			"patterns": [
+				{
+					"name": "meta.item-access.python",
+					"begin": "(?x)\n  \\b(?=\n    [[:alpha:]_]\\w* \\s* \\[\n  )\n",
+					"end": "(\\])",
+					"endCaptures": {
+						"1": {
+							"name": "punctuation.definition.arguments.end.python"
+						}
+					},
+					"patterns": [
+						{
+							"include": "#item-name"
+						},
+						{
+							"include": "#item-index"
+						},
+						{
+							"include": "#expression"
+						}
+					]
+				}
+			]
+		},
+		"item-name": {
+			"patterns": [
+				{
+					"include": "#special-variables"
+				},
+				{
+					"include": "#builtin-functions"
+				},
+				{
+					"include": "#special-names"
+				},
+				{
+					"name": "meta.indexed-name.python",
+					"match": "(?x)\n  \\b ([[:alpha:]_]\\w*) \\b\n"
+				}
+			]
+		},
+		"item-index": {
+			"begin": "(\\[)",
+			"end": "(?=\\])",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.definition.arguments.begin.python"
+				}
+			},
+			"contentName": "meta.item-access.arguments.python",
+			"patterns": [
+				{
+					"name": "punctuation.separator.slice.python",
+					"match": ":"
+				},
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"function-call": {
+			"name": "meta.function-call.python",
+			"comment": "Regular function call of the type \"name(args)\"",
+			"begin": "(?x)\n  \\b(?=\n    ([[:alpha:]_]\\w*) \\s* (\\()\n  )\n",
+			"end": "(\\))",
+			"endCaptures": {
+				"1": {
+					"name": "punctuation.definition.arguments.end.python"
+				}
+			},
+			"patterns": [
+				{
+					"include": "#special-variables"
+				},
+				{
+					"include": "#function-name"
+				},
+				{
+					"include": "#function-arguments"
+				}
+			]
+		},
+		"function-name": {
+			"patterns": [
+				{
+					"include": "#builtin-possible-callables"
+				},
+				{
+					"comment": "Some color schemas support meta.function-call.generic scope",
+					"name": "meta.function-call.generic.python",
+					"match": "(?x)\n  \\b ([[:alpha:]_]\\w*) \\b\n"
+				}
+			]
+		},
+		"function-arguments": {
+			"begin": "(\\()",
+			"end": "(?=\\))(?!\\)\\s*\\()",
+			"beginCaptures": {
+				"1": {
+					"name": "punctuation.definition.arguments.begin.python"
+				}
+			},
+			"contentName": "meta.function-call.arguments.python",
+			"patterns": [
+				{
+					"name": "punctuation.separator.arguments.python",
+					"match": "(,)"
+				},
+				{
+					"match": "(?x)\n  (?:(?<=[,(])|^) \\s* (\\*{1,2})\n",
+					"captures": {
+						"1": {
+							"name": "keyword.operator.unpacking.arguments.python"
+						}
+					}
+				},
+				{
+					"include": "#illegal-names"
+				},
+				{
+					"match": "\\b([[:alpha:]_]\\w*)\\s*(=)(?!=)",
+					"captures": {
+						"1": {
+							"name": "variable.parameter.function-call.python"
+						},
+						"2": {
+							"name": "keyword.operator.assignment.python"
+						}
+					}
+				},
+				{
+					"name": "keyword.operator.assignment.python",
+					"match": "=(?!=)"
+				},
+				{
+					"include": "#expression"
+				},
+				{
+					"match": "\\s*(\\))\\s*(\\()",
+					"captures": {
+						"1": {
+							"name": "punctuation.definition.arguments.end.python"
+						},
+						"2": {
+							"name": "punctuation.definition.arguments.begin.python"
+						}
+					}
+				}
+			]
+		},
+		"builtin-callables": {
+			"patterns": [
+				{
+					"include": "#illegal-names"
+				},
+				{
+					"include": "#illegal-object-name"
+				},
+				{
+					"include": "#builtin-exceptions"
+				},
+				{
+					"include": "#builtin-functions"
+				},
+				{
+					"include": "#builtin-types"
+				}
+			]
+		},
+		"builtin-possible-callables": {
+			"patterns": [
+				{
+					"include": "#builtin-callables"
+				},
+				{
+					"include": "#magic-names"
+				}
+			]
+		},
+		"builtin-exceptions": {
+			"name": "support.type.exception.python",
+			"match": "(?x) (?<!\\.) \\b(\n  (Assertion | Attribute | Buffer | BlockingIO\n    | BrokenPipe | ChildProcess\n    | (Connection (Aborted | Refused | Reset)?)\n    | EOF | Environment | FileExists | FileNotFound\n    | FloatingPoint | IO | Indentation | Index | Interrupted\n    | IsADirectory | NotADirectory | Permission | ProcessLookup\n    | Timeout\n    | Key | Lookup | Memory | Name | NotImplemented | OS | Overflow\n    | Reference | Runtime | Recursion | Syntax | System\n    | Tab | Type | UnboundLocal | Unicode(Encode|Decode|Translate)?\n    | Value | Windows | ZeroDivision | ModuleNotFound\n  ) Error\n|\n  ((Pending)?Deprecation | Runtime | Syntax | User | Future  | Unicode | Bytes | Resource\n  )? Warning\n|\n  SystemExit | Stop(Async)?Iteration\n  | KeyboardInterrupt\n  | GeneratorExit | (Base)?Exception\n)\\b\n"
+		},
+		"builtin-functions": {
+			"patterns": [
+				{
+					"name": "support.function.builtin.python",
+					"match": "(?x)\n  (?<!\\.) \\b(abs)\\b\n"
+				}
+			]
+		},
+		"builtin-types": {
+			"name": "support.type.python",
+			"match": "(?x)\n  (?<!\\.) \\b(\n    bool | bytearray | bytes | classmethod | complex | dict\n    | float | frozenset | int | list | object | property\n    | set | slice | staticmethod | str | tuple | type\n\n    (?# Although 'super' is not a type, it's related to types,\n        and is special enough to be highlighted differently from\n        other built-ins)\n    | super\n  )\\b\n"
+		},
+		"special-variables": {
+			"match": "(?x)\n  \\b (?<!\\.) (?:\n    (self) | (cls)\n  )\\b\n",
+			"captures": {
+				"1": {
+					"name": "variable.language.special.self.python"
+				},
+				"2": {
+					"name": "variable.language.special.cls.python"
+				}
+			}
+		},
+		"ellipsis": {
+			"name": "constant.other.ellipsis.python",
+			"match": "\\.\\.\\."
+		},
+		"backticks": {
+			"name": "invalid.deprecated.backtick.python",
+			"begin": "\\`",
+			"end": "(?:\\`|(?<!\\\\)(\\n))",
+			"patterns": [
+				{
+					"include": "#expression"
+				}
+			]
+		},
+		"illegal-operator": {
+			"patterns": [
+				{
+					"name": "invalid.illegal.operator.python",
+					"match": "&&|\\|\\||--|\\+\\+"
+				},
+				{
+					"name": "invalid.illegal.operator.python",
+					"comment": "We don't want `!` to flash when we're typing `!=`",
+					"match": "!\\b"
+				}
+			]
+		},
+		"illegal-object-name": {
+			"comment": "It's illegal to name class or function \"True\"",
+			"name": "keyword.illegal.name.python",
+			"match": "\\b(True|False|None)\\b"
+		},
+		"illegal-anno": {
+			"name": "invalid.illegal.annotation.python",
+			"match": "->"
+		}
+	}
+}

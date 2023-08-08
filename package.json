@@ -18,8 +18,8 @@
     }],
     "grammars": [{
       "language": "mp",
-      "scopeName": "source.psm",
-      "path": "./syntaxes/mp.tmLanguage"
+      "scopeName": "source.mp",
+      "path": "./syntaxes/mp.tmLanguage.json"
     }]
   }
 }
